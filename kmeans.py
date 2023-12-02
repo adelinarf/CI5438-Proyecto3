@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans
 from random import uniform
 import random
@@ -54,8 +53,6 @@ class K_means:
 
 	def updating(self,distances,minimo_local):
 		for i in range(self.n):
-			print("size of points at cluster",i)
-			print(len(self.clusters[i].points))
 			points = np.array(self.clusters[i].points)
 			if points.shape[0] > 0:
 				new = np.mean(points, axis=0) #points.mean(axis=0)
@@ -72,7 +69,6 @@ class K_means:
 				break
 			distances = self.assign()
 			self.updating(distances,minimo_local)
-		print(self.predict())
 
 	def predict(self):
 		p = []
@@ -83,7 +79,7 @@ class K_means:
 			p.append(np.argmin(d))
 		return p
 
-	def p(self):
+	def plot(self):
 		pred = self.predict()
 
 		plt.figure(figsize=(12,5))
@@ -92,8 +88,9 @@ class K_means:
 		for i in self.clusters:
 			center = i.center
 			plt.scatter(center[0],center[1],marker = '^',c = 'red')
-		plt.xlabel("petal length (cm)")
-		plt.ylabel("petal width (cm)")
+		plt.title("Plot Cluster {} sepal length vs sepal width".format(self.n))
+		plt.xlabel("sepal length (cm)")
+		plt.ylabel("sepal width (cm)")
 
 		plt.subplot(1,2,2)   
 		plt.scatter(self.X[:,2],self.X[:,3],c = pred)
@@ -102,21 +99,9 @@ class K_means:
 			plt.scatter(center[2],center[3],marker = '^',c = 'red')
 		plt.xlabel("petal length (cm)")
 		plt.ylabel("petal width (cm)")
-		plt.show() 
-
-
-	def plot(self,x,y,f):
-		pred = self.predict()
-		fig = plt.figure(0)
-		plt.grid(True)
-		plt.scatter(self.X[:,x],self.X[:,y],c = pred)
-		for i in self.clusters:
-			center = i.center
-			plt.scatter(center[0],center[1],marker = '^',c = 'red')
-		plt.title("Plot columna {} vs {}".format(f(x),f(y)))
-		plt.savefig("plots/plot_columna={}_vs_columna={}.jpg".format(f(x),f(y)), dpi=300)
+		plt.title("Plot Cluster {} petal length vs petal width".format(self.n))
+		plt.savefig("plots/plot_nclusters={}.jpg".format(self.n), dpi=300)
 		plt.clf()
-		#plt.show()
 
 	def __str__(self):
 		a = ""
@@ -125,15 +110,8 @@ class K_means:
 		return a
 
 
-X,y = make_blobs(n_samples = 20,n_features = 4,centers = 5,random_state = 23)
-
 iris = pd.read_csv("iris.csv")
 X = np.array(iris.drop("species",axis=1))
-
-#fig = plt.figure(0)
-#plt.grid(True)
-#plt.scatter(X[:,0],X[:,1])
-#plt.show()
 
 def f(x):
 	if x == 0:
@@ -145,21 +123,29 @@ def f(x):
 	else:
 		"petal_width"
 
+setosa = X[0: 50 , :]
+versicolor = X[50: 100, :]
+virginica = X[100:, :]
 
 
-c = K_means(2,X)
-c.fit()
-#c.p()
-print(c)
+clusters_test = [1,2,3,4,5,6]
+for cluster in clusters_test:
+	c = K_means(cluster,X)
+	c.fit()
+	c.plot()
+	pred = c.predict()
+	setosa_pred = pred[0:50]
+	versicolor_pred = pred[50:100]
+	virginica_pred = pred[100:]
+	'''
+	print("el cluster es ", cluster)
+	#podria funcionar para binarios porque los demas no se separan por clase al dividir en clusters
+	print(setosa_pred)
+	print(versicolor_pred)
+	print(virginica_pred)
+	
+	km = KMeans(n_clusters=cluster, random_state=2,n_init="auto")
+	km.fit(X)
+	a = km.predict(X, sample_weight='deprecated')
+	print(a)'''
 
-
-km = KMeans(n_clusters=2, random_state=2,n_init="auto")
-km.fit(X)
-a = km.predict(X, sample_weight='deprecated')
-print(a)
-'''
-for x in range(4):
-	for y in range(4):
-		if x!=y:
-			c.plot(x,y,f)
-#c.plot()'''
