@@ -27,23 +27,15 @@ class K_means:
 		self.clusters = [0]*ncluster
 
 	def initialize(self):
-		'''center = [random.choice(self.X[0])]
-		for x in range(self.n-1):
-			dists = np.sum([self.distance_x_y(centroid, self.X) for centroid in self.centroids], axis=0)
-			dists = np.sum(dists)
-			new_centroid_idx, = np.random.choice(range(len(self.X)), size=1, p=dists)
-			self.centroids += [self.X[new_centroid_idx]]'''
 		for x in range(self.n):
-			center = self.X[0] #[0]*(2*np.random.random((self.X.shape[1],))-1)
-			#min_, max_ = np.min(self.X), np.max(self.X)
-			#self.centroids = [X[0,0]]*(self.X.shape[1])
+			center = self.X[0]
 			self.clusters[x] = Cluster(center,[])
 
 	def distance_x_y(self,x,y):
 		potencia=(x-y)**2
 		suma = np.sum(potencia)
 		raiz = np.sqrt(suma)
-		return raiz  #puse el axis para la matriz
+		return raiz 
 
 	def assign(self):
 		dist = []
@@ -62,7 +54,7 @@ class K_means:
 		for i in range(self.n):
 			points = np.array(self.clusters[i].points)
 			if points.shape[0] > 0:
-				new = np.mean(points, axis=0) #points.mean(axis=0)
+				new = np.mean(points, axis=0)
 				self.clusters[i].center = new 
 				self.clusters[i].points = []
 
