@@ -66,11 +66,8 @@ class K_means:
         minimo_local = 0.01        
         for _ in range(0,5):
             if max(distances) < minimo_local:
-                print("out")
                 break
-            print("assigned")
             distances = self.assign()
-            print("update")
             self.updating()
 
     def pred(self,Y):
@@ -157,7 +154,7 @@ def get_image(image_path):
     image = Image.open(image_path)
     width, height = image.size
     pixel_values = list(image.getdata())
-    print(image.mode)
+    
     if image.mode == "RGB":
         channels = 3
     elif image.mode=="RGBA":
@@ -170,41 +167,44 @@ def get_image(image_path):
     pixel_values = np.array(pixel_values).reshape((width, height, channels))
     return pixel_values
 
-data = get_image('Alpha.png')
-
-def change_color(c):
-    if c == 2:
-        return (59, 141, 218)
-    elif c==1:
-        return (59, 218, 83)
-    elif c==0:
-        return (218, 167, 59)
-    return (255, 255, 255)
-
-k=3
-#################################
-#################################
-
-Z=data[0]
-for x in range(1,len(data)):
-    Z = np.vstack((Z, data[x]))
-
-a = K_means(k,Z)
-a.fit()
-prediction = a.predict()
-
-for y in range(len(Z)):
-    Z[y] = change_color(prediction[y])
-
-new = []
-base = 0
-for x in range(data.shape[0]):
-    new.append(Z[base:base+data.shape[1]])
-    base = base+data.shape[1]
-new=np.array(new)
 
 #################################
 #################################
 
-im = Image.fromarray(new.astype(np.uint8), 'RGB')
-im.save("output_alpha.png")
+for k in [2, 4, 8, 16, 32]:
+    print(f"k={k}")
+    image_name = 'rainbow_cat.jpg'
+    data = get_image(image_name)
+
+    # Aplanar la imagen
+    Z = data[0]
+    for x in range(1,len(data)):
+        Z = np.vstack((Z, data[x]))
+
+    # Realizar el entrenamiento
+    a = K_means(k,Z)
+    a.fit()
+    prediction = a.predict()
+    
+    def change_color(c, k):
+        if c > k or c < 0:
+            raise Exception("Error in clasification")
+        colors = [[0,0,0,],[255,255,255,], [49, 202, 247], [238, 155, 63], [45, 175, 108], [63, 151, 222], [214, 79, 142], [194, 224, 37], [250, 140, 222], [24, 64, 147], [177, 147, 91], [95, 78, 102], [217, 121, 32], [57, 40, 193], [237, 34, 167], [109, 202, 53], [2, 37, 135], [189, 82, 6], [221, 109, 70], [102, 91, 121], [9, 198, 59], [63, 113, 152], [66, 126, 193], [110, 201, 96], [213, 227, 74], [176, 215, 204], [154, 248, 84], [237, 187, 125], [40, 148, 124], [252, 223, 26], [180, 79, 38], [105, 176, 145], [143, 115, 232], [86, 83, 122]]
+        return colors[c]
+
+    # Convertir las predicciones en colores
+    for y in range(len(Z)):
+        Z[y] = change_color(prediction[y], k)
+
+    new = []
+    base = 0
+    for _ in range(data.shape[1]):
+        new.append(Z[base:base+data.shape[0]])
+        base = base+data.shape[0]
+    new=np.array(new)
+
+    #################################
+    #################################
+
+    im = Image.fromarray(new.astype(np.uint8), 'RGB')
+    im.save(f"outputs_images\\output_{image_name.split('.')[0]}_k={k}.jpg")
