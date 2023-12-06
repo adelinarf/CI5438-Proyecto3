@@ -165,15 +165,18 @@ def get_image(image_path):
         print("Unknown mode: %s" % image.mode)
         return None
     pixel_values = np.array(pixel_values).reshape((width, height, channels))
+    breakpoint()
     return pixel_values
 
 
+
 #################################
+#    Generacion de imagenes     #
 #################################
 
 for k in [2, 4, 8, 16, 32]:
     print(f"k={k}")
-    image_name = 'rainbow_cat.jpg'
+    image_name = 'solid_colors_small.jpg'
     data = get_image(image_name)
 
     # Aplanar la imagen
@@ -189,7 +192,40 @@ for k in [2, 4, 8, 16, 32]:
     def change_color(c, k):
         if c > k or c < 0:
             raise Exception("Error in clasification")
-        colors = [[0,0,0,],[255,255,255,], [49, 202, 247], [238, 155, 63], [45, 175, 108], [63, 151, 222], [214, 79, 142], [194, 224, 37], [250, 140, 222], [24, 64, 147], [177, 147, 91], [95, 78, 102], [217, 121, 32], [57, 40, 193], [237, 34, 167], [109, 202, 53], [2, 37, 135], [189, 82, 6], [221, 109, 70], [102, 91, 121], [9, 198, 59], [63, 113, 152], [66, 126, 193], [110, 201, 96], [213, 227, 74], [176, 215, 204], [154, 248, 84], [237, 187, 125], [40, 148, 124], [252, 223, 26], [180, 79, 38], [105, 176, 145], [143, 115, 232], [86, 83, 122]]
+        colors = [[255, 255, 255], # Blanco
+                [0, 0, 0], # Negro
+                [128, 128, 0], # Amarillo oscuro
+                [255, 128, 128], # Rosa                
+                [0, 128, 128], # Cian oscuro
+                [255, 255, 0], # Amarillo
+                [0, 255, 255], # Cian
+                [0, 0, 255], # Azul
+                [255, 0, 0], # Rojo
+                [0, 255, 0], # Verde
+                [128, 0, 128], # Magenta oscuro
+                [192, 192, 192], # Gris claro
+                [128, 128, 128], # Gris medio
+                [255, 128, 0], # Naranja
+                [128, 255, 0], # Verde lima
+                [128, 0, 255], # Violeta
+                [0, 128, 255], # Azul claro
+                [128, 0, 0], # Rojo oscuro
+                [0, 128, 0], # Verde oscuro
+                [0, 0, 128], # Azul oscuro
+                [64, 64, 64], # Gris oscuro
+                [255, 0, 255], # Magenta 
+                [128, 255, 128], # Verde claro
+                [128, 128, 255], # Azul claro
+                [255, 255, 128], # Amarillo claro
+                [255, 128, 255], # Rosa claro
+                [128, 255, 255], # Cian claro
+                [192, 0, 0], # Rojo más oscuro
+                [0, 192, 0], # Verde más oscuro
+                [0, 0, 192], # Azul más oscuro
+                [192, 192, 0], # Amarillo más oscuro
+                [192, 0, 192], # Magenta más oscuro
+                [0, 192, 192], # Cian más oscuro
+            ]
         return colors[c]
 
     # Convertir las predicciones en colores
@@ -202,9 +238,6 @@ for k in [2, 4, 8, 16, 32]:
         new.append(Z[base:base+data.shape[0]])
         base = base+data.shape[0]
     new=np.array(new)
-
-    #################################
-    #################################
 
     im = Image.fromarray(new.astype(np.uint8), 'RGB')
     im.save(f"outputs_images\\output_{image_name.split('.')[0]}_k={k}.jpg")
