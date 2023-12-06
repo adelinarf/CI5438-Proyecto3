@@ -30,7 +30,7 @@ class K_means:
 
     def initialize(self):
         for x in range(self.n):
-            center = self.X[0]
+            center = self.X[25200]
             self.clusters[x] = Cluster(center,[])
 
     def distance_x_y(self,x,y):
@@ -64,8 +64,10 @@ class K_means:
         self.initialize()
         distances = [100]
         minimo_local = 0.01        
-        for _ in range(0,5):
+        for _ in range(0,25):
+            
             if max(distances) < minimo_local:
+                print("Break")
                 break
             distances = self.assign()
             self.updating()
@@ -152,9 +154,10 @@ for cluster in clusters_test:
 
 def get_image(image_path):
     image = Image.open(image_path)
+    image = image.resize((180,280))
     width, height = image.size
     pixel_values = list(image.getdata())
-    
+    print(image.mode)
     if image.mode == "RGB":
         channels = 3
     elif image.mode=="RGBA":
@@ -164,8 +167,7 @@ def get_image(image_path):
     else:
         print("Unknown mode: %s" % image.mode)
         return None
-    pixel_values = np.array(pixel_values).reshape((width, height, channels))
-    breakpoint()
+    pixel_values = np.array(pixel_values).reshape((width, height, channels))    
     return pixel_values
 
 
@@ -176,9 +178,9 @@ def get_image(image_path):
 
 for k in [2, 4, 8, 16, 32]:
     print(f"k={k}")
-    image_name = 'solid_colors_small.jpg'
+    image_name = 'rainbow_cat.jpg'
     data = get_image(image_name)
-
+    
     # Aplanar la imagen
     Z = data[0]
     for x in range(1,len(data)):
@@ -240,4 +242,4 @@ for k in [2, 4, 8, 16, 32]:
     new=np.array(new)
 
     im = Image.fromarray(new.astype(np.uint8), 'RGB')
-    im.save(f"outputs_images\\output_{image_name.split('.')[0]}_k={k}.jpg")
+    im.save(f"outputs_images\\output_{image_name.split('.')[0]}mod_k={k}.jpg")
