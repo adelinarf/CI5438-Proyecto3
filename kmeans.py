@@ -64,7 +64,7 @@ class K_means:
         self.initialize()
         distances = [100]
         minimo_local = 0.01        
-        for _ in range(0,25):
+        for _ in range(0,30):
             
             if max(distances) < minimo_local:
                 print("Break")
@@ -154,7 +154,7 @@ for cluster in clusters_test:
 
 def get_image(image_path):
     image = Image.open(image_path)
-    image = image.resize((180,280))
+    image = image.resize((220,280))
     width, height = image.size
     pixel_values = list(image.getdata())
     print(image.mode)
@@ -178,7 +178,7 @@ def get_image(image_path):
 
 for k in [2, 4, 8, 16, 32]:
     print(f"k={k}")
-    image_name = 'rainbow_cat.jpg'
+    image_name = 'pencils.jpg'
     data = get_image(image_name)
     
     # Aplanar la imagen
@@ -191,48 +191,26 @@ for k in [2, 4, 8, 16, 32]:
     a.fit()
     prediction = a.predict()
     
-    def change_color(c, k):
-        if c > k or c < 0:
-            raise Exception("Error in clasification")
-        colors = [[255, 255, 255], # Blanco
-                [0, 0, 0], # Negro
-                [128, 128, 0], # Amarillo oscuro
-                [255, 128, 128], # Rosa                
-                [0, 128, 128], # Cian oscuro
-                [255, 255, 0], # Amarillo
-                [0, 255, 255], # Cian
-                [0, 0, 255], # Azul
-                [255, 0, 0], # Rojo
-                [0, 255, 0], # Verde
-                [128, 0, 128], # Magenta oscuro
-                [192, 192, 192], # Gris claro
-                [128, 128, 128], # Gris medio
-                [255, 128, 0], # Naranja
-                [128, 255, 0], # Verde lima
-                [128, 0, 255], # Violeta
-                [0, 128, 255], # Azul claro
-                [128, 0, 0], # Rojo oscuro
-                [0, 128, 0], # Verde oscuro
-                [0, 0, 128], # Azul oscuro
-                [64, 64, 64], # Gris oscuro
-                [255, 0, 255], # Magenta 
-                [128, 255, 128], # Verde claro
-                [128, 128, 255], # Azul claro
-                [255, 255, 128], # Amarillo claro
-                [255, 128, 255], # Rosa claro
-                [128, 255, 255], # Cian claro
-                [192, 0, 0], # Rojo más oscuro
-                [0, 192, 0], # Verde más oscuro
-                [0, 0, 192], # Azul más oscuro
-                [192, 192, 0], # Amarillo más oscuro
-                [192, 0, 192], # Magenta más oscuro
-                [0, 192, 192], # Cian más oscuro
-            ]
-        return colors[c]
+    def get_colors(predictions, k):
+        "Obtiene los colores para la paleta de k colores"
+        colors = []
+        for i in range(k):
+            # Conseguir la posicion de un valor perteneciente a
+            # la clase k_i
+            try:
+                pos = predictions.index(i)
+            except ValueError:
+                # Si el cluster k no tiene asignacion, su color nunca
+                # es usado.
+                pos = 0
+            colors.append(Z[pos])
+        return colors
 
     # Convertir las predicciones en colores
+    colors = get_colors(prediction, k)
     for y in range(len(Z)):
-        Z[y] = change_color(prediction[y], k)
+          
+        Z[y] = colors[prediction[y]]
 
     new = []
     base = 0
@@ -242,4 +220,4 @@ for k in [2, 4, 8, 16, 32]:
     new=np.array(new)
 
     im = Image.fromarray(new.astype(np.uint8), 'RGB')
-    im.save(f"outputs_images\\output_{image_name.split('.')[0]}mod_k={k}.jpg")
+    im.save(f"outputs_images\\output_{image_name.split('.')[0]}_k={k}.jpg")
