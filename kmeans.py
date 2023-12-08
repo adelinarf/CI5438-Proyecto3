@@ -64,7 +64,7 @@ class K_means:
         self.initialize()
         distances = [100]
         minimo_local = 0.01        
-        for _ in range(0,30):
+        for _ in range(0,50):
             
             if max(distances) < minimo_local:
                 print("Break")
@@ -176,7 +176,7 @@ def get_image(image_path):
 #    Generacion de imagenes     #
 #################################
 
-for k in [2, 4, 8, 16, 32]:
+for k in [64, 128]:
     print(f"k={k}")
     image_name = 'pencils.jpg'
     data = get_image(image_name)
