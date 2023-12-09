@@ -30,7 +30,7 @@ class K_means:
 
     def initialize(self):
         for x in range(self.n):
-            center = self.X[25200]
+            center = self.X[int(len(self.X)/2)]
             self.clusters[x] = Cluster(center,[])
 
     def distance_x_y(self,x,y):
@@ -125,12 +125,7 @@ class K_means:
 iris = pd.read_csv("iris.csv")
 X = np.array(iris.drop("species",axis=1))
 
-setosa = X[0: 50 , :]
-versicolor = X[50: 100, :]
-virginica = X[100:, :]
-
-
-clusters_test = [] #[1,2,3,4,5,6]
+clusters_test = [2,3,4,5]
 for cluster in clusters_test:
     c = K_means(cluster,X)
     c.fit()
@@ -139,17 +134,11 @@ for cluster in clusters_test:
     setosa_pred = pred[0:50]
     versicolor_pred = pred[50:100]
     virginica_pred = pred[100:]
-    '''
-    print("el cluster es ", cluster)
-    #podria funcionar para binarios porque los demas no se separan por clase al dividir en clusters
-    print(setosa_pred)
-    print(versicolor_pred)
-    print(virginica_pred)
-
-    km = KMeans(n_clusters=cluster, random_state=2,n_init="auto")
-    km.fit(X)
-    a = km.predict(X, sample_weight='deprecated')
-    print(a)'''
+    if cluster == 3:
+        print("Resultados para k=3:")
+        print("setosa = ",setosa_pred)
+        print("versicolor = ", versicolor_pred)
+        print("virginica = ", virginica_pred)
 
 
 def get_image(image_path):
@@ -180,7 +169,7 @@ for k in [64, 128]:
     print(f"k={k}")
     image_name = 'pencils.jpg'
     data = get_image(image_name)
-    
+
     # Aplanar la imagen
     Z = data[0]
     for x in range(1,len(data)):
